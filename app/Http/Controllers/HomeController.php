@@ -24,6 +24,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // ここで、ノートを取得（whereNullで削除されていないものだけ取得）
+        $notes = Note::select('notes.*')
+            ->where('user_id', '=', \Auth::id())
+            ->whereNull('deleted_at')
+            ->orderBy('updated_at', 'DESC')    // ASC=昇順、DESC=降順
+            ->get();
+
         return view('create');
     }
 

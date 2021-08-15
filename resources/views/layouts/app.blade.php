@@ -92,7 +92,7 @@
                         <div class="card-body">
                             {{--ノートの内容は配列で渡されるため、ループ処理で表示させる--}}
                             @foreach($notes as $note)
-                                <a class="card-text d-block">{{ $note['content'] }}</a>
+                                <a href="/edit/{{$note['id']}}" class="card-text d-block">{{ $note['content'] }}</a>
                             @endforeach
                         </div>
                     </div>

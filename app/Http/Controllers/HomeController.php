@@ -31,7 +31,8 @@ class HomeController extends Controller
             ->orderBy('updated_at', 'DESC')    // ASC=昇順、DESC=降順
             ->get();
 
-        return view('create');
+        // compactメソッドに変数名を指定すると、Viewに値を渡せる
+        return view('create', compact('notes'));
     }
 
     public function store(Request $request)

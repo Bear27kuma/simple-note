@@ -61,4 +61,14 @@ class HomeController extends Controller
 
         return view('edit', compact('notes', 'edit_note'));
     }
+
+    public function update(Request $request)
+    {
+        $posts = $request->all();
+
+        // updateでは必ずwhereをつけて、どのnote_idがupdateされるかをDBに示してあげる
+        Note::where('id', $posts['note_id'])->update(['content' => $posts['content']]);
+
+        return redirect( route('home') );
+    }
 }

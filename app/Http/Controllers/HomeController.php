@@ -71,4 +71,15 @@ class HomeController extends Controller
 
         return redirect( route('home') );
     }
+
+    public function destroy(Request $request)
+    {
+        $posts = $request->all();
+
+        // deleteで削除してしまうと物理削除=データごと全て消してしまい、DBに何も残らなくなるため復元ができなくなる
+        // deleted_atカラムにタイムスタンプを入れることで、DBにデータは残っているけどページには表示されない=論理削除になる
+        Note::where('id', $posts['note_id'])->update(['deleted_at' => date('Y-m-d H:i:s', time())]);
+
+        return redirect( route('home') );
+    }
 }

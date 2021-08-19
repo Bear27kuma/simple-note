@@ -34,8 +34,13 @@ class HomeController extends Controller
             ->orderBy('updated_at', 'DESC')    // ASC=昇順、DESC=降順
             ->get();
 
+        $tags = Tag::where('user_id', '=', \Auth::id())
+            ->whereNull('deleted_at')
+            ->orderby('id', 'DESC')
+            ->get();
+
         // compactメソッドに変数名を指定すると、Viewに値を渡せる
-        return view('create', compact('notes'));
+        return view('create', compact('notes', 'tags'));
     }
 
     public function store(Request $request)
@@ -59,6 +64,10 @@ class HomeController extends Controller
                 $tag_id = Tag::insertGetId(['user_id' => \Auth::id(), 'name' => $posts['new_tag']]);
                 // note_tagsにインサートして、ノートとタグを紐づける
                 NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag_id]);
+            }
+            // 既存タグが紐づけられた場合 → note_tagsテーブルにインサート
+            foreach($posts['tags'] as $tag) {
+                NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag]);
             }
         });
         // ==== ここまでがトランザクションの範囲 ====

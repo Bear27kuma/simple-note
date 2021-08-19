@@ -11,6 +11,14 @@
             <div class="form-group">
                 <textarea class="form-control" name="content" rows="3" placeholder="ここに内容を入力"></textarea>
             </div>
+            {{--foreachでDBから取得したタグを一覧表示する--}}
+            @foreach($tags as $tag)
+                <div class="form-check form-check-inline mb-3">
+                    {{--nameがtags[]と配列になっているのは、ループ処理で複数のタグが設定されることを想定して、配列形式で送信する--}}
+                    <input class="form-check-input" type="checkbox" name="tags[]" id="{{ $tag['id'] }}" value="{{ $tag['id'] }}">
+                    <label class="form-check-label" for="{{ $tag['id'] }}">{{ $tag['name'] }}</label>
+                </div>
+            @endforeach
             <input type="text" class="form-control w-50 mb-3" name="new_tag" placeholder="新しいタグを入力">
             <button type="submit" class="btn btn-primary">保存</button>
         </form>

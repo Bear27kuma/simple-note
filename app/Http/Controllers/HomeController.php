@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Note;
+use App\Models\Tag;
+use App\Models\NoteTag;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -41,8 +44,27 @@ class HomeController extends Controller
         // dump dieの略 → メソッドの引数に取った値を展開して止める → データ確認
         // dd(\Auth::id());
 
+        // ==== ここからトランザクション開始 ====
+        // クロージャーを使う
+        DB::transaction(function() use($posts) {
+            // メモIDをインサートして取得
+            // insertGetIdではインサートしてそのidを返す
+            $note_id = Note::insertGetId(['content' => $posts['content'], 'user_id' => \Auth::id()]);
+            // 新規タグがすでにtagsテーブルに存在するのかチェック
+            // where文は続けて書くことができ、その場合「かつ」の意味になる
+            $tag_exists = Tag::where('user_id', '=', \Auth::id())->where('name', '=', $posts['new_tag'])->exists();
+            // 新規タグが入力されているかチェック
+            if ( !empty($posts['new_tag']) && !$tag_exists ) {
+                // 新規タグが存在しなければ、tagsテーブルにインサート → IDを取得（中間テーブルにtag_idを入れるため）
+                $tag_id = Tag::insertGetId(['user_id' => \Auth::id(), 'name' => $posts['new_tag']]);
+                // note_tagsにインサートして、ノートとタグを紐づける
+                NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag_id]);
+            }
+        });
+        // ==== ここまでがトランザクションの範囲 ====
+
         // テーブルのカラム名と一致させる
-        Note::insert(['content' => $posts['content'], 'user_id' => \Auth::id()]);
+        // Note::insert(['content' => $posts['content'], 'user_id' => \Auth::id()]);
 
         // /homeにリダイレクトする
         return redirect( route('home') );

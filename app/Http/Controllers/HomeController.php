@@ -87,10 +87,27 @@ class HomeController extends Controller
             ->orderBy('updated_at', 'DESC')
             ->get();
 
-        // 一意なidをfindで一つ取得する
-        $edit_note = Note::find($id);
+        // 条件に一致するデータを取得する
+        $edit_note = Note::select('notes.*', 'tags.id AS tag_id')
+            ->leftJoin('note_tags', 'note_tags.note_id', '=', 'notes.id')
+            ->leftJoin('tags', 'note_tags.tag_id', '=', 'tags.id')
+            ->where('notes.user_id', '=', \Auth::id())
+            ->where('notes.id', '=', $id)
+            ->whereNull('notes.deleted_at')
+            ->get();
 
-        return view('edit', compact('notes', 'edit_note'));
+        // tagは複数存在する可能性があるので、配列に格納してからViewに渡す
+        $include_tags = [];
+        foreach($edit_note as $note) {
+            $include_tags[] = $note['tag_id'];
+        }
+
+        $tags = Tag::where('user_id', '=', \Auth::id())
+            ->whereNull('deleted_at')
+            ->orderby('id', 'DESC')
+            ->get();
+
+        return view('edit', compact('notes', 'edit_note', 'include_tags', 'tags'));
     }
 
     public function update(Request $request)

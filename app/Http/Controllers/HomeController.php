@@ -114,8 +114,28 @@ class HomeController extends Controller
     {
         $posts = $request->all();
 
-        // updateでは必ずwhereをつけて、どのnote_idがupdateされるかをDBに示してあげる
-        Note::where('id', $posts['note_id'])->update(['content' => $posts['content']]);
+        // ==== ここからトランザクション開始 ====
+        DB::transaction(function() use($posts) {
+            // updateでは必ずwhereをつけて、どのnote_idがupdateされるかをDBに示してあげる
+            Note::where('id', $posts['note_id'])->update(['content' => $posts['content']]);
+            // 一旦ノートとタグの紐付けを削除 → 中間テーブルを一旦削除
+            NoteTag::where('note_id', '=', $posts['note_id'])->delete();
+            // 再度ノートとタグの紐付け
+            foreach ($posts['tags'] as $tag) {
+                NoteTag::insert(['note_id' => $posts['note_id'], 'tag_id' => $tag]);
+            }
+            // 新規タグがすでにtagsテーブルに存在するのかチェック
+            // もし、新しいタグの入力があれば、インサートして紐づける
+            $tag_exists = Tag::where('user_id', '=', \Auth::id())->where('name', '=', $posts['new_tag'])->exists();
+            // 新規タグが入力されているかチェック
+            if ( !empty($posts['new_tag']) && !$tag_exists ) {
+                // 新規タグが存在しなければ、tagsテーブルにインサート → IDを取得（中間テーブルにtag_idを入れるため）
+                $tag_id = Tag::insertGetId(['user_id' => \Auth::id(), 'name' => $posts['new_tag']]);
+                // note_tagsにインサートして、ノートとタグを紐づける
+                NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag_id]);
+            }
+        });
+        // ==== ここまでがトランザクションの範囲 ====
 
         return redirect( route('home') );
     }

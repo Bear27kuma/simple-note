@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Note;
+use App\Models\Tag;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,8 +34,13 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('updated_at', 'DESC')    // ASC=昇順、DESC=降順
                 ->get();
 
+            $tags = Tag::where('user_id', '=', \Auth::id())
+                ->whereNull('deleted_at')
+                ->orderBy('id', 'DESC')
+                ->get();
+
             // すべてのViewに$notesを渡す
-            $view->with('notes', $notes);
+            $view->with('notes', $notes)->with('tags', $tags);
         });
     }
 }

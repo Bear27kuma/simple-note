@@ -27,20 +27,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // ここで、ノートを取得（whereNullで削除されていないものだけ取得）
-        $notes = Note::select('notes.*')
-            ->where('user_id', '=', \Auth::id())
-            ->whereNull('deleted_at')
-            ->orderBy('updated_at', 'DESC')    // ASC=昇順、DESC=降順
-            ->get();
-
         $tags = Tag::where('user_id', '=', \Auth::id())
             ->whereNull('deleted_at')
             ->orderby('id', 'DESC')
             ->get();
 
         // compactメソッドに変数名を指定すると、Viewに値を渡せる
-        return view('create', compact('notes', 'tags'));
+        return view('create', compact('tags'));
     }
 
     public function store(Request $request)
@@ -81,12 +74,6 @@ class HomeController extends Controller
 
     public function edit($id)
     {
-        $notes = Note::select('notes.*')
-            ->where('user_id', '=', \Auth::id())
-            ->whereNull('deleted_at')
-            ->orderBy('updated_at', 'DESC')
-            ->get();
-
         // 条件に一致するデータを取得する
         $edit_note = Note::select('notes.*', 'tags.id AS tag_id')
             ->leftJoin('note_tags', 'note_tags.note_id', '=', 'notes.id')
@@ -107,7 +94,7 @@ class HomeController extends Controller
             ->orderby('id', 'DESC')
             ->get();
 
-        return view('edit', compact('notes', 'edit_note', 'include_tags', 'tags'));
+        return view('edit', compact('edit_note', 'include_tags', 'tags'));
     }
 
     public function update(Request $request)
@@ -132,7 +119,7 @@ class HomeController extends Controller
                 // 新規タグが存在しなければ、tagsテーブルにインサート → IDを取得（中間テーブルにtag_idを入れるため）
                 $tag_id = Tag::insertGetId(['user_id' => \Auth::id(), 'name' => $posts['new_tag']]);
                 // note_tagsにインサートして、ノートとタグを紐づける
-                NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag_id]);
+                NoteTag::insert(['note_id' => $posts['note_id'], 'tag_id' => $tag_id]);
             }
         });
         // ==== ここまでがトランザクションの範囲 ====

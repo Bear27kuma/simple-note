@@ -11,6 +11,9 @@
             <div class="form-group">
                 <textarea class="form-control" name="content" rows="3" placeholder="ここに内容を入力"></textarea>
             </div>
+            @error('content')
+                <div class="alert alert-danger">ノート内容を入力してください</div>
+            @enderror
             {{--foreachでDBから取得したタグを一覧表示する--}}
             @foreach($tags as $tag)
                 <div class="form-check form-check-inline mb-3">

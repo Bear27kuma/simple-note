@@ -18,6 +18,9 @@
             <div class="form-group">
                 <textarea class="form-control" name="content" rows="3" placeholder="ここに内容を入力">{{ $edit_note[0]['content'] }}</textarea>
             </div>
+            @error('content')
+                <div class="alert alert-danger">ノート内容を入力してください</div>
+            @enderror
             @foreach($tags as $tag)
                 <div class="form-check form-check-inline mb-3">
                     {{--三項演算子で紐づいているタグだけチェックを入れる処理を記述する--}}

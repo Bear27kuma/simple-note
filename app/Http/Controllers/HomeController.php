@@ -39,6 +39,8 @@ class HomeController extends Controller
     public function store(Request $request)
     {
         $posts = $request->all();
+        // バリデーション（ノートの内容が必須）、contentはビューのname属性
+        $request->validate(['content' => 'required']);
         // dump dieの略 → メソッドの引数に取った値を展開して止める → データ確認
         // dd(\Auth::id());
 
@@ -100,7 +102,7 @@ class HomeController extends Controller
     public function update(Request $request)
     {
         $posts = $request->all();
-
+        $request->validate(['content' => 'required']);
         // ==== ここからトランザクション開始 ====
         DB::transaction(function() use($posts) {
             // updateでは必ずwhereをつけて、どのnote_idがupdateされるかをDBに示してあげる

@@ -1,19 +1,14 @@
 @extends('layouts.app')
 
-{{--javascriptという名前でセクションを作り、レイアウトファイルで読み込む--}}
-@section('javascript')
-    <script src="/js/confirm.js"></script>
-@endsection
-
 @section('content')
     <div class="card">
         <div class="card-header">
             ノート編集
-            <form class="card-body" id="delete-form" action="{{ route('destroy') }}" method="POST">
+            <form class="card-body" action="{{ route('destroy') }}" method="POST">
                 @csrf
                 {{--削除機能も同様にどのノートを削除するのかをidで示すためinputのhiddenを設置--}}
                 <input type="hidden" name="note_id" value="{{ $edit_note[0]['id'] }}">
-                <button type="submit" onclick="deleteHandle(event);">削除</button>
+                <i class="fas fa-trash" onclick="deleteHandle(event);"></i>
             </form>
         </div>
         <form class="card-body" action="{{ route('update') }}" method="POST">

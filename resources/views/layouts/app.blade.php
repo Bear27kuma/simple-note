@@ -19,6 +19,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/edc4ee5159.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="app">
@@ -92,7 +93,7 @@
                 </div>
                 <div class="col-md-4 p-0">
                     <div class="card">
-                        <div class="card-header">ノート一覧</div>
+                        <div class="card-header">ノート一覧 <a href="{{ route('home') }}"><i class="fas fa-plus-circle"></i></a></div>
                         <div class="card-body">
                             {{--ノートの内容は配列で渡されるため、ループ処理で表示させる--}}
                             @foreach($notes as $note)

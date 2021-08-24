@@ -1,0 +1,10 @@
+.my-card-body {
+    height: calc(100vh - (36px + 41px));
+}
+
+.elipsis {
+    overflow: hidden;
+    /*一行になる*/
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

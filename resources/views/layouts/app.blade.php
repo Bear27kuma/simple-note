@@ -19,6 +19,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="/css/layout.css">
     <script src="https://kit.fontawesome.com/edc4ee5159.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -83,21 +84,21 @@
                 <div class="col-md-2 p-0">
                     <div class="card">
                         <div class="card-header">タグ一覧</div>
-                        <div class="card-body">
-                                <a href="/" class="card-text d-block">すべて表示</a>
+                        <div class="card-body my-card-body">
+                                <a href="/" class="card-text d-block mb-2">すべて表示</a>
                             @foreach($tags as $tag)
-                                <a href="/?tag={{$tag['id']}}" class="card-text d-block">{{ $tag['name'] }}</a>
+                                <a href="/?tag={{$tag['id']}}" class="card-text d-block elipsis mb-2">{{ $tag['name'] }}</a>
                             @endforeach
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 p-0">
                     <div class="card">
-                        <div class="card-header">ノート一覧 <a href="{{ route('home') }}"><i class="fas fa-plus-circle"></i></a></div>
-                        <div class="card-body">
+                        <div class="card-header d-flex justify-content-between">ノート一覧 <a href="{{ route('home') }}"><i class="fas fa-plus-circle"></i></a></div>
+                        <div class="card-body my-card-body">
                             {{--ノートの内容は配列で渡されるため、ループ処理で表示させる--}}
                             @foreach($notes as $note)
-                                <a href="/edit/{{$note['id']}}" class="card-text d-block">{{ $note['content'] }}</a>
+                                <a href="/edit/{{$note['id']}}" class="card-text d-block elipsis mb-2">{{ $note['content'] }}</a>
                             @endforeach
                         </div>
                     </div>

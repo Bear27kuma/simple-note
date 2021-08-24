@@ -2,16 +2,16 @@
 
 @section('content')
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between">
             ノート編集
-            <form class="card-body" action="{{ route('destroy') }}" method="POST">
+            <form action="{{ route('destroy') }}" method="POST">
                 @csrf
                 {{--削除機能も同様にどのノートを削除するのかをidで示すためinputのhiddenを設置--}}
                 <input type="hidden" name="note_id" value="{{ $edit_note[0]['id'] }}">
-                <i class="fas fa-trash" onclick="deleteHandle(event);"></i>
+                <i class="fas fa-trash mr-3" onclick="deleteHandle(event);"></i>
             </form>
         </div>
-        <form class="card-body" action="{{ route('update') }}" method="POST">
+        <form class="card-body my-card-body" action="{{ route('update') }}" method="POST">
             @csrf
             {{--どのノートを編集しているかを示すため、inputのhiddenでノートのidを埋め込んでおく → コントローラー側でどのノートをupdateさせるかが理解できる--}}
             <input type="hidden" name="note_id" value="{{ $edit_note[0]['id'] }}">

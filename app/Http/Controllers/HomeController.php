@@ -61,8 +61,10 @@ class HomeController extends Controller
                 NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag_id]);
             }
             // 既存タグが紐づけられた場合 → note_tagsテーブルにインサート
-            foreach($posts['tags'] as $tag) {
-                NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag]);
+            if( !empty($posts['tags'][0])) {
+                foreach($posts['tags'] as $tag) {
+                    NoteTag::insert(['note_id' => $note_id, 'tag_id' => $tag]);
+                }
             }
         });
         // ==== ここまでがトランザクションの範囲 ====
